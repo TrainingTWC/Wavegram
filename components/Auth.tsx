@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../src/assets/logo.png';
 import { supabase } from '../services/supabaseClient';
 
 const Auth: React.FC = () => {
@@ -87,7 +88,7 @@ const Auth: React.FC = () => {
             <div className="w-full max-w-md z-10">
                 <div className="text-center mb-10">
                     <div className="inline-block mb-4 px-8 py-2">
-                        <img src="logo.png" alt="Wavegram" className="w-64 h-auto object-contain" />
+                        <img src={logo} alt="Wavegram" className="w-64 h-auto object-contain" />
                     </div>
                     <p className="text-[#c29a67] font-bold uppercase tracking-[0.4em] text-[10px] opacity-70">The Coffee Network</p>
                 </div>

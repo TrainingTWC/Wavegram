@@ -280,8 +280,12 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({ achievement, isUnlocked =
                         className="relative w-[85vw] max-w-[400px] aspect-[2/3] cursor-pointer"
                         style={{
                             transformStyle: 'preserve-3d',
-                            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                            transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+                            transform: `
+                                rotateY(${isFlipped ? 180 : 0}deg)
+                                rotateX(${((tiltPos.y - 50) / 50) * -15}deg)
+                                rotateY(${((tiltPos.x - 50) / 50) * 15 + (isFlipped ? 180 : 0)}deg)
+                            `,
+                            transition: isFlipped ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'transform 0.1s ease-out'
                         }}
                     >
                         {/* Front Side */}

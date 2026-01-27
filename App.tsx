@@ -30,6 +30,7 @@ const App: React.FC = () => {
   const [profileView, setProfileView] = useState<'brews' | 'badges'>('brews');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   // Notification States
   const [unreadCount, setUnreadCount] = useState(0);
@@ -91,11 +92,15 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const confirmLogout = async () => {
     localStorage.removeItem('bc_mock_session');
     await supabase.auth.signOut();
-    // Clear session state directly instead of reload to prevent GitHub navigation
     setSession(null);
     setCurrentUser(null);
+    setIsLogoutModalOpen(false);
   };
 
   const handleActivityClick = (postId: string) => {
@@ -922,6 +927,39 @@ const App: React.FC = () => {
           currentUser={currentUser}
           onClose={() => setSelectedPostForShare(null)}
         />
+      )}
+
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 bg-[#0e0d0c]/90 backdrop-blur-md flex items-center justify-center p-6 z-[100] animate-in fade-in duration-200">
+          <div className="bg-[#1a1817] w-full max-w-sm rounded-[2.5rem] border border-[#2c1a12] p-8 shadow-2xl overflow-hidden transform animate-in zoom-in-95 duration-200">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-[#efebe9] mb-2 tracking-tight">Closing the Lounge?</h3>
+              <p className="text-[#a09a96] text-sm leading-relaxed mb-8">
+                Are you sure you want to log out of your session? You'll need to sign back in to see the latest brews.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setIsLogoutModalOpen(false)}
+                  className="bg-[#2c1a12]/50 text-[#efebe9] font-bold py-4 rounded-2xl hover:bg-[#2c1a12] transition-all active:scale-95 border border-white/5"
+                >
+                  Wait, stay
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="bg-red-500 text-white font-bold py-4 rounded-2xl hover:bg-red-600 transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                >
+                  Yes, logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </Layout>
   );

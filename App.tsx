@@ -28,6 +28,8 @@ const App: React.FC = () => {
   const [activityLoading, setActivityLoading] = useState(false);
   const [highlightedPostId, setHighlightedPostId] = useState<string | null>(null);
   const [profileView, setProfileView] = useState<'brews' | 'badges'>('brews');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
 
   // Notification States
   const [unreadCount, setUnreadCount] = useState(0);
@@ -170,6 +172,56 @@ const App: React.FC = () => {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
+
+  // Setup Realtime Subscriptions
+  useEffect(() => {
+    if (!currentUser) return;
+
+    console.log('Setting up real-time subscriptions...');
+
+    // Subscribe to posts changes
+    const postsSubscription = supabase
+      .channel('posts-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'posts' },
+        (payload) => {
+          console.log('Posts change detected:', payload);
+          fetchPosts();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to comments changes
+    const commentsSubscription = supabase
+      .channel('comments-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'comments' },
+        (payload) => {
+          console.log('Comments change detected:', payload);
+          fetchPosts();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to likes changes
+    const likesSubscription = supabase
+      .channel('likes-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'likes' },
+        (payload) => {
+          console.log('Likes change detected:', payload);
+          fetchPosts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up real-time subscriptions...');
+      postsSubscription.unsubscribe();
+      commentsSubscription.unsubscribe();
+      likesSubscription.unsubscribe();
+    };
+  }, [currentUser, fetchPosts]);
 
   // Handle Tab changes
   useEffect(() => {
@@ -459,8 +511,73 @@ const App: React.FC = () => {
 
     switch (activeTab) {
       case NavigationTab.HOME:
+        const touchStartY = React.useRef(0);
+        const handleTouchStart = (e: React.TouchEvent) => {
+          const scrollTop = (e.currentTarget as HTMLDivElement).scrollTop;
+          if (scrollTop === 0) {
+            touchStartY.current = e.touches[0].clientY;
+          }
+        };
+
+        const handleTouchMove = (e: React.TouchEvent) => {
+          const scrollTop = (e.currentTarget as HTMLDivElement).scrollTop;
+          if (scrollTop === 0 && touchStartY.current > 0) {
+            const touchY = e.touches[0].clientY;
+            const distance = Math.max(0, Math.min(touchY - touchStartY.current, 120));
+            setPullDistance(distance);
+          }
+        };
+
+        const handleTouchEnd = async (e: React.TouchEvent) => {
+          if (pullDistance > 80) {
+            setIsRefreshing(true);
+            await fetchPosts();
+            await fetchActivity();
+            setTimeout(() => setIsRefreshing(false), 500);
+          }
+          setPullDistance(0);
+          touchStartY.current = 0;
+        };
+
         return (
-          <div className="flex-1 flex flex-col items-center">
+          <div
+            className="flex-1 flex flex-col items-center overflow-y-auto"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Pull to Refresh Indicator */}
+            <div
+              className="w-full max-w-2xl flex justify-center transition-all duration-200"
+              style={{
+                height: pullDistance > 0 ? `${pullDistance}px` : '0px',
+                opacity: pullDistance / 120
+              }}
+            >
+              <div className="flex items-center gap-2 text-[#c29a67]">
+                {isRefreshing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-[#c29a67] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm font-bold">Refreshing...</span>
+                  </>
+                ) : pullDistance > 80 ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm font-bold">Release to refresh</span>
+                  </>
+                ) : pullDistance > 0 ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    <span className="text-sm font-bold">Pull to refresh</span>
+                  </>
+                ) : null}
+              </div>
+            </div>
+
             <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
               <h1 className="text-2xl font-black text-[#efebe9] tracking-tighter">Daily Brews</h1>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>

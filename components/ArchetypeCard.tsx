@@ -86,8 +86,8 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({ achievement, isUnlocked =
             let targetX = ((clampedGamma + 45) / 90) * 100;
             let targetY = ((clampedBeta + 45) / 90) * 100;
 
-            // Apply smoothing
-            const smoothing = 0.3;
+            // Apply smoothing - much slower and smoother now
+            const smoothing = 0.05;
             gyroSmoothingRef.current.x += (targetX - gyroSmoothingRef.current.x) * smoothing;
             gyroSmoothingRef.current.y += (targetY - gyroSmoothingRef.current.y) * smoothing;
 
@@ -281,11 +281,10 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({ achievement, isUnlocked =
                         style={{
                             transformStyle: 'preserve-3d',
                             transform: `
-                                rotateY(${isFlipped ? 180 : 0}deg)
                                 rotateX(${((tiltPos.y - 50) / 50) * -15}deg)
                                 rotateY(${((tiltPos.x - 50) / 50) * 15 + (isFlipped ? 180 : 0)}deg)
                             `,
-                            transition: isFlipped ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'transform 0.1s ease-out'
+                            transition: isFlipped ? 'transform 0.2s ease-out' : 'transform 0.1s ease-out'
                         }}
                     >
                         {/* Front Side */}

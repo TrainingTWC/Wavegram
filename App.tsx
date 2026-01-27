@@ -113,8 +113,8 @@ const App: React.FC = () => {
     }, 100);
   };
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
+  const fetchPosts = useCallback(async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     const { data: postsData, error } = await supabase
       .from('posts')
       .select(`
@@ -542,7 +542,7 @@ const App: React.FC = () => {
             setIsRefreshing(true);
 
             // Haptic feedback placeholder if we were native
-            await Promise.all([fetchPosts(), fetchActivity()]);
+            await Promise.all([fetchPosts(true), fetchActivity()]);
 
             setTimeout(() => setIsRefreshing(false), 800);
           }

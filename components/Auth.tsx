@@ -85,10 +85,10 @@ const Auth: React.FC = () => {
                 <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#c29a67]/5 rounded-full blur-[120px]" />
             </div>
 
-            <div className="w-full max-w-md z-10">
-                <div className="text-center mb-10">
-                    <img src={loginLogo} alt="Wavegram" className="w-80 h-auto object-contain mx-auto block mb-4" />
-                    <p className="text-[#c29a67] font-bold uppercase tracking-[0.4em] text-[10px] opacity-70">The Coffee Network</p>
+            <div className="w-full max-w-md z-10 pt-10">
+                <div className="text-center mb-6">
+                    <img src={loginLogo} alt="Wavegram" className="w-80 h-auto object-contain mx-auto block" />
+                    <p className="text-[#c29a67] font-bold uppercase tracking-[0.4em] text-[10px] opacity-70 mt-4">The Coffee Network</p>
                 </div>
 
                 <div className="glass bg-[#1a1817]/60 p-8 rounded-[2.5rem] border border-[#2c1a12] shadow-2xl backdrop-blur-xl">

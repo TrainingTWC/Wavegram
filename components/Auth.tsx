@@ -87,7 +87,7 @@ const Auth: React.FC = () => {
 
             <div className="w-full max-w-md z-10">
                 <div className="text-center mb-10">
-                    <img src={loginLogo} alt="Wavegram" className="w-80 h-auto object-contain" />
+                    <img src={loginLogo} alt="Wavegram" className="w-80 h-auto object-contain mx-auto block mb-4" />
                     <p className="text-[#c29a67] font-bold uppercase tracking-[0.4em] text-[10px] opacity-70">The Coffee Network</p>
                 </div>
 

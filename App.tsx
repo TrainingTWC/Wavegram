@@ -90,7 +90,9 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     localStorage.removeItem('bc_mock_session');
     await supabase.auth.signOut();
-    window.location.reload(); // Force page refresh to return to login
+    // Clear session state directly instead of reload to prevent GitHub navigation
+    setSession(null);
+    setCurrentUser(null);
   };
 
   const handleActivityClick = (postId: string) => {
@@ -459,7 +461,7 @@ const App: React.FC = () => {
       case NavigationTab.HOME:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="p-6 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
+            <div className="p-6 pt-8 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
               <h1 className="text-2xl font-black text-[#efebe9] tracking-tighter">Daily Brews</h1>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>
             </div>
@@ -636,7 +638,7 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="p-6 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
+            <div className="p-6 pt-8 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
               <h1 className="text-2xl font-black text-[#efebe9] tracking-tighter">Interactions</h1>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Latest Taps</div>
             </div>

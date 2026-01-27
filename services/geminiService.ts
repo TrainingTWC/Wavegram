@@ -2,10 +2,11 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getAI = () => {
-  if (!process.env.API_KEY) {
+  const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
     throw new Error("API Key is missing");
   }
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
+  return new GoogleGenAI({ apiKey });
 };
 
 export const generatePostContent = async (topic: string): Promise<string> => {

@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, onLo
       <nav className="hidden md:flex flex-col items-center py-6 w-20 fixed left-0 top-0 bottom-0 bg-[#0e0d0c] z-20 border-r border-[#2c1a12]">
         <div className="mb-10 cursor-pointer group px-4" onClick={() => setActiveTab(NavigationTab.HOME)}>
           <img
-            src="/logo.png"
+            src="logo.png"
             alt="Wavegram"
             className="w-full h-auto object-contain group-hover:scale-110 transition-transform duration-300"
           />

@@ -38,6 +38,7 @@ const App: React.FC = () => {
   );
   // Ref to track latest view time for async operations to avoid race conditions
   const lastViewedRef = React.useRef(lastViewedInteractions);
+  const touchStartY = React.useRef(0);
 
   // Handle Auth Session
   useEffect(() => {
@@ -511,7 +512,6 @@ const App: React.FC = () => {
 
     switch (activeTab) {
       case NavigationTab.HOME:
-        const touchStartY = React.useRef(0);
         const handleTouchStart = (e: React.TouchEvent) => {
           const scrollTop = (e.currentTarget as HTMLDivElement).scrollTop;
           if (scrollTop === 0) {

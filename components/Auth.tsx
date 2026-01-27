@@ -158,6 +158,32 @@ const Auth: React.FC = () => {
                 <p className="mt-8 text-center text-[#a09a96]/40 text-xs px-8">
                     This is a private network. By entering, you agree to the TWC internal communication guidelines.
                 </p>
+
+                {/* Download Section */}
+                <div className="mt-12 flex flex-col items-center gap-6 pb-8">
+                    <div className="flex flex-col items-center gap-4 bg-[#1a1817]/40 p-6 rounded-[2rem] border border-[#2c1a12] backdrop-blur-md">
+                        <div className="p-2 bg-white rounded-xl">
+                            <img
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://TrainingTWC.github.io/Wavegram/wavegram.apk"
+                                alt="Download QR Code"
+                                className="w-[120px] h-[120px]"
+                            />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-[#efebe9] text-sm font-bold mb-1">Get the Android App</p>
+                            <p className="text-[#a09a96] text-[10px] uppercase tracking-wider">Scan to download Wavegram.apk</p>
+                        </div>
+                    </div>
+
+                    <a
+                        href="wavegram.apk"
+                        download
+                        className="flex items-center gap-2 px-6 py-3 bg-[#c29a67]/10 hover:bg-[#c29a67]/20 border border-[#c29a67]/30 rounded-full text-[#c29a67] text-sm font-bold transition-all transform active:scale-95"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download APK Directly
+                    </a>
+                </div>
             </div>
         </div>
     );

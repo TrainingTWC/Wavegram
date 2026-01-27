@@ -523,17 +523,28 @@ const App: React.FC = () => {
           const scrollTop = (e.currentTarget as HTMLDivElement).scrollTop;
           if (scrollTop === 0 && touchStartY.current > 0) {
             const touchY = e.touches[0].clientY;
-            const distance = Math.max(0, Math.min(touchY - touchStartY.current, 120));
-            setPullDistance(distance);
+            const rawDistance = touchY - touchStartY.current;
+
+            // Apply logarithmic damping so it feels more "natural"
+            const dampedDistance = Math.max(0, Math.min(Math.log10(1 + rawDistance / 100) * 150, 120));
+            setPullDistance(dampedDistance);
+
+            // Prevent browser pull-to-refresh if we're handling it
+            if (rawDistance > 10) {
+              if (e.cancelable) e.preventDefault();
+            }
           }
         };
 
         const handleTouchEnd = async (e: React.TouchEvent) => {
-          if (pullDistance > 80) {
+          const isTriggered = pullDistance > 70;
+          if (isTriggered && !isRefreshing) {
             setIsRefreshing(true);
-            await fetchPosts();
-            await fetchActivity();
-            setTimeout(() => setIsRefreshing(false), 500);
+
+            // Haptic feedback placeholder if we were native
+            await Promise.all([fetchPosts(), fetchActivity()]);
+
+            setTimeout(() => setIsRefreshing(false), 800);
           }
           setPullDistance(0);
           touchStartY.current = 0;
@@ -548,10 +559,10 @@ const App: React.FC = () => {
           >
             {/* Pull to Refresh Indicator */}
             <div
-              className="w-full max-w-2xl flex justify-center transition-all duration-200"
+              className="w-full max-w-2xl flex justify-center overflow-hidden transition-all duration-300 ease-out"
               style={{
-                height: pullDistance > 0 ? `${pullDistance}px` : '0px',
-                opacity: pullDistance / 120
+                height: isRefreshing ? '60px' : `${pullDistance}px`,
+                opacity: isRefreshing ? 1 : Math.min(pullDistance / 80, 1)
               }}
             >
               <div className="flex items-center gap-2 text-[#c29a67]">

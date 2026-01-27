@@ -315,20 +315,22 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({ achievement, isUnlocked =
                                             background: `
                                                 radial-gradient(
                                                     circle at ${tiltPos.x}% ${tiltPos.y}%, 
-                                                    rgba(255, 255, 255, ${achievement.rarity === 'legendary' ? '0.35' : '0.25'}) 0%, 
-                                                    transparent 50%
+                                                    rgba(255, 255, 255, ${achievement.rarity === 'legendary' ? '0.6' : '0.5'}) 0%, 
+                                                    transparent 60%
                                                 ),
                                                 linear-gradient(
                                                     ${tiltPos.x + tiltPos.y}deg, 
                                                     transparent 0%, 
-                                                    ${achievement.rarity === 'legendary' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255, 100, 200, 0.15)'} 20%, 
-                                                    ${achievement.rarity === 'legendary' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(100, 200, 255, 0.15)'} 40%, 
-                                                    ${achievement.rarity === 'legendary' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(200, 100, 255, 0.15)'} 60%, 
-                                                    transparent 80%
+                                                    ${achievement.rarity === 'legendary' ? 'rgba(255, 220, 100, 0.4)' : 'rgba(255, 100, 200, 0.3)'} 15%, 
+                                                    ${achievement.rarity === 'legendary' ? 'rgba(255, 150, 50, 0.3)' : 'rgba(100, 200, 255, 0.3)'} 30%, 
+                                                    ${achievement.rarity === 'legendary' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.4)'} 45%, 
+                                                    ${achievement.rarity === 'legendary' ? 'rgba(255, 150, 50, 0.3)' : 'rgba(100, 255, 200, 0.3)'} 60%, 
+                                                    ${achievement.rarity === 'legendary' ? 'rgba(255, 220, 100, 0.4)' : 'rgba(200, 100, 255, 0.3)'} 75%, 
+                                                    transparent 90%
                                                 )
                                             `,
-                                            backgroundSize: '200% 200%',
-                                            transition: 'background 0.1s ease-out'
+                                            backgroundSize: '150% 150%',
+                                            transition: 'background 0.15s ease-out'
                                         }}
                                     />
                                 )}

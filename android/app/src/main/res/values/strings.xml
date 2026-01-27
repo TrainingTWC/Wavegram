@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Wavegram</string>
+    <string name="title_activity_main">Wavegram</string>
+    <string name="package_name">com.wavegram.app</string>
+    <string name="custom_url_scheme">com.wavegram.app</string>
+</resources>

@@ -1,0 +1,7 @@
+{
+  "name": "Corporate Threads",
+  "description": "A minimalist, high-performance social platform clone designed for internal company communication, featuring AI-powered thread generation and interaction tools.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

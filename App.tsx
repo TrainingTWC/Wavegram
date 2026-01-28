@@ -664,8 +664,8 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-7 flex items-center">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+              <div className="h-10 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>
@@ -764,8 +764,8 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-7 flex items-center">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+              <div className="h-10 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Profile</div>
@@ -906,8 +906,8 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-7 flex items-center">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+              <div className="h-10 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Interactions</div>

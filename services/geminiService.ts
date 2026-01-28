@@ -13,7 +13,7 @@ export const generatePostContent = async (topic: string): Promise<string> => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: `You are a world-class barista and social media manager for "Wavegram", a premium third-wave coffee community. Write a short, aesthetic "Wave" post (max 280 characters) about this topic: "${topic}". Use an engaging, slightly sophisticated yet passionate tone about the art of the perfect pour. Include relevant emojis (like ☕, ✨, 🌿, 🧊) and 1-2 coffee-related hashtags.`,
       config: {
         temperature: 0.8,
@@ -31,7 +31,7 @@ export const suggestReply = async (postContent: string): Promise<string[]> => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: `Given the following coffee-related post: "${postContent}", suggest 3 short, enthusiastic replies from the perspective of an expert barista. Return only the replies separated by double pipes (||).`,
     });
     const text = response.text || "";

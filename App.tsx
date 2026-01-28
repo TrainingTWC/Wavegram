@@ -10,7 +10,9 @@ import { supabase } from './services/supabaseClient';
 import Auth from './components/Auth';
 import ShareModal from './components/ShareModal';
 import ArchetypeCard from './components/ArchetypeCard';
+import SkeletonLoader from './components/SkeletonLoader';
 import { BADGES, calculateEarnedBadges, Badge } from './utils/badgeSystem';
+import logo from './src/assets/login_logo.png';
 
 
 const App: React.FC = () => {
@@ -28,6 +30,8 @@ const App: React.FC = () => {
   const [activityLoading, setActivityLoading] = useState(false);
   const [highlightedPostId, setHighlightedPostId] = useState<string | null>(null);
   const [profileView, setProfileView] = useState<'brews' | 'badges'>('brews');
+  const [viewedUserId, setViewedUserId] = useState<string | null>(null);
+  const [viewedUser, setViewedUser] = useState<User | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -59,13 +63,21 @@ const App: React.FC = () => {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) fetchProfile(session.user.id);
+      if (session) {
+        fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) fetchProfile(session.user.id);
-      else setCurrentUser(null);
+      if (session) {
+        fetchProfile(session.user.id);
+      } else {
+        setCurrentUser(null);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -80,6 +92,7 @@ const App: React.FC = () => {
 
     if (error) {
       console.error('Error fetching profile:', error);
+      setLoading(false);
     } else if (data) {
       setCurrentUser({
         id: data.id,
@@ -88,6 +101,9 @@ const App: React.FC = () => {
         avatar: data.avatar_url,
         verified: true
       });
+      // loading will be set to false by fetchPosts which is triggered by currentUser change
+    } else {
+      setLoading(false);
     }
   };
 
@@ -116,6 +132,11 @@ const App: React.FC = () => {
       // Clear highlight after 3 seconds
       setTimeout(() => setHighlightedPostId(null), 3000);
     }, 100);
+  };
+
+  const handleUserClick = (userId: string) => {
+    setViewedUserId(userId);
+    setActiveTab(NavigationTab.PROFILE);
   };
 
   const fetchPosts = useCallback(async (isBackground = false) => {
@@ -503,6 +524,55 @@ const App: React.FC = () => {
     }
   };
 
+  // Fetch viewed user profile when viewedUserId changes
+  useEffect(() => {
+    if (viewedUserId && viewedUserId !== currentUser?.id) {
+      const fetchViewedUser = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', viewedUserId)
+          .single();
+
+        if (data) {
+          setViewedUser({
+            id: data.id,
+            username: data.username,
+            name: data.full_name,
+            avatar: data.avatar_url,
+            verified: true
+          });
+        }
+      };
+      fetchViewedUser();
+    } else {
+      setViewedUser(null);
+    }
+  }, [viewedUserId, currentUser]);
+
+  function setTabWrapper(tab: NavigationTab) {
+    if (tab === NavigationTab.PROFILE) {
+      setViewedUserId(null); // Reset to own profile when clicking Profile icon
+    }
+    if (tab === NavigationTab.ACTIVITY) {
+      setUnreadCount(0);
+
+      // Calculate max timestamp from current activities to handle clock skew
+      // (Server time might be ahead of local client time)
+      const latestActivityTime = activities.length > 0
+        ? Math.max(...activities.map(a => a.timestamp.getTime()))
+        : 0;
+
+      const now = Date.now();
+      const lastViewed = Math.max(now, latestActivityTime);
+
+      setLastViewedInteractions(lastViewed);
+      lastViewedRef.current = lastViewed;
+      localStorage.setItem('lastViewedInteractions', lastViewed.toString());
+    }
+    setActiveTab(tab);
+  }
+
   const renderContent = () => {
     if (loading && activeTab === NavigationTab.HOME) {
       return (
@@ -594,8 +664,10 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
-              <h1 className="text-2xl font-black text-[#efebe9] tracking-tighter">Daily Brews</h1>
+            <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
+              <div className="h-8 flex items-center">
+                <img src={logo} alt="Wavegram" className="h-full object-contain" />
+              </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>
             </div>
             <div className="w-full max-w-2xl px-4 py-8 space-y-8 pb-32">
@@ -618,6 +690,7 @@ const App: React.FC = () => {
                       onShare={(p) => setSelectedPostForShare(p)}
                       onEdit={(p) => setSelectedPostForEdit(p)}
                       onDelete={handleDeletePost}
+                      onUserClick={handleUserClick}
                     />
                   </div>
                 ))}
@@ -626,39 +699,98 @@ const App: React.FC = () => {
           </div>
         );
       case NavigationTab.PROFILE:
-        // Filter by userId for robustness (names can change/vary)
-        const userPostsList = posts.filter(p => p.userId === currentUser.id);
+        const isViewingOwnProfile = !viewedUserId || viewedUserId === currentUser.id;
+        const targetUser = isViewingOwnProfile ? currentUser : viewedUser;
+
+        if (!targetUser) {
+          return (
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-10 h-10 border-4 border-[#c29a67] border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-[#a09a96] mt-4 font-medium">Brewing profile...</p>
+            </div>
+          );
+        }
+
+        // Filter brews for the target user
+        const userPostsList = posts.filter(p => p.userId === targetUser.id);
         const totalBrews = userPostsList.length;
         const totalSips = userPostsList.reduce((sum, p) => sum + (p.likes || 0), 0);
-
-        // Calculate other stats for badges
-        const totalComments = userPostsList.reduce((sum, p) => sum + (p.comments?.length || 0), 0);
-        const sharesReceived = userPostsList.reduce((sum, p) => sum + (p.shares || 0), 0);
-        const totalShares = 0; // We don't track shares MADE by user easily yet, using 0 for now or fetch if needed
 
         const userStats = {
           totalBrews,
           totalSips,
-          totalComments,
-          totalShares,
-          sharesReceived
+          totalComments: userPostsList.reduce((sum, p) => sum + (p.comments?.length || 0), 0),
+          totalShares: 0,
+          sharesReceived: userPostsList.reduce((sum, p) => sum + (p.shares || 0), 0)
         };
 
         const earnedBadges = calculateEarnedBadges(userStats);
         const nextBadge = BADGES.find(b => !earnedBadges.some(eb => eb.id === b.id));
 
+        const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files?.[0];
+          if (!file || !currentUser) return;
+
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${currentUser.id}-${Math.random()}.${fileExt}`;
+          const filePath = `avatars/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('brew-images')
+            .upload(filePath, file);
+
+          if (uploadError) {
+            alert(`Upload failed: ${uploadError.message}`);
+            return;
+          }
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('brew-images')
+            .getPublicUrl(filePath);
+
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ avatar_url: publicUrl })
+            .eq('id', currentUser.id);
+
+          if (updateError) {
+            alert(`Update failed: ${updateError.message}`);
+          } else {
+            setCurrentUser({ ...currentUser, avatar: publicUrl });
+            fetchPosts(true); // Refresh posts to show new avatar
+          }
+        };
+
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="w-full max-w-2xl px-4 py-12">
+            {/* Profile Header for Mobile/Consistency */}
+            <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
+              <div className="h-8 flex items-center">
+                <img src={logo} alt="Wavegram" className="h-full object-contain" />
+              </div>
+              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Profile</div>
+            </div>
+
+            <div className="w-full max-w-2xl px-4 py-32">
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-[#efebe9]">{currentUser.name}</h1>
+                  <h1 className="text-3xl font-bold tracking-tight text-[#efebe9]">{targetUser.name}</h1>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[#a09a96]">@{currentUser.username}</span>
-                    <span className="px-2 py-0.5 bg-[#c29a67]/10 text-[#c29a67] text-[10px] font-bold rounded-full border border-[#c29a67]/20 uppercase tracking-wider">Verified Barista</span>
+                    <span className="text-[#a09a96]">@{targetUser.username}</span>
+                    {targetUser.verified && (
+                      <span className="px-2 py-0.5 bg-[#c29a67]/10 text-[#c29a67] text-[10px] font-bold rounded-full border border-[#c29a67]/20 uppercase tracking-wider">Verified Barista</span>
+                    )}
                   </div>
                 </div>
-                <img src={currentUser.avatar} className="w-20 h-20 rounded-full border-2 border-[#c29a67]/20" />
+                <div className="relative group">
+                  <img src={targetUser.avatar} className="w-20 h-20 rounded-full border-2 border-[#c29a67]/20 object-cover" />
+                  {isViewingOwnProfile && (
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" /></svg>
+                    </label>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4 mb-8">
@@ -742,24 +874,27 @@ const App: React.FC = () => {
                       <PostItem
                         key={post.id}
                         post={post}
-                        isOwner={true}
+                        isOwner={post.userId === currentUser.id}
                         onLike={handleLike}
                         onComment={(p) => setSelectedPostForComment(p)}
                         onShare={(p) => setSelectedPostForShare(p)}
                         onEdit={(p) => setSelectedPostForEdit(p)}
                         onDelete={handleDeletePost}
+                        onUserClick={handleUserClick}
                       />
                     ))}
 
                     {userPostsList.length === 0 && (
                       <div className="text-center py-12">
-                        <p className="text-[#a09a96] mb-4">You haven't brewed anything yet.</p>
-                        <button
-                          onClick={() => setIsPostModalOpen(true)}
-                          className="px-6 py-2 bg-[#c29a67] text-[#0e0d0c] font-bold rounded-xl hover:bg-[#d4aa7d] transition-colors"
-                        >
-                          Brew your first cup
-                        </button>
+                        <p className="text-[#a09a96] mb-4">No brews shared yet.</p>
+                        {isViewingOwnProfile && (
+                          <button
+                            onClick={() => setIsPostModalOpen(true)}
+                            className="px-6 py-2 bg-[#c29a67] text-[#0e0d0c] font-bold rounded-xl hover:bg-[#d4aa7d] transition-colors"
+                          >
+                            Brew your first cup
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -771,9 +906,11 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between sticky top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
-              <h1 className="text-2xl font-black text-[#efebe9] tracking-tighter">Interactions</h1>
-              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Latest Taps</div>
+            <div className="p-6 pt-16 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]">
+              <div className="h-8 flex items-center">
+                <img src={logo} alt="Wavegram" className="h-full object-contain" />
+              </div>
+              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Interactions</div>
             </div>
             <div className="w-full max-w-2xl px-4 py-8 space-y-4 pb-32">
               {activityLoading ? (
@@ -841,6 +978,10 @@ const App: React.FC = () => {
         );
     }
   };
+
+  if (loading) {
+    return <SkeletonLoader />;
+  }
 
   if (!session || !currentUser) {
     return <Auth />;
@@ -964,25 +1105,7 @@ const App: React.FC = () => {
     </Layout>
   );
 
-  function setTabWrapper(tab: NavigationTab) {
-    if (tab === NavigationTab.ACTIVITY) {
-      setUnreadCount(0);
 
-      // Calculate max timestamp from current activities to handle clock skew
-      // (Server time might be ahead of local client time)
-      const latestActivityTime = activities.length > 0
-        ? Math.max(...activities.map(a => a.timestamp.getTime()))
-        : 0;
-
-      const now = Date.now();
-      const lastViewed = Math.max(now, latestActivityTime);
-
-      setLastViewedInteractions(lastViewed);
-      lastViewedRef.current = lastViewed;
-      localStorage.setItem('lastViewedInteractions', lastViewed.toString());
-    }
-    setActiveTab(tab);
-  }
 };
 
 export default App;

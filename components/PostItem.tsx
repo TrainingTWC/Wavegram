@@ -11,9 +11,10 @@ interface PostItemProps {
   onShare: (post: Post) => void;
   onEdit?: (post: Post) => void;
   onDelete?: (id: string) => void;
+  onUserClick?: (userId: string) => void;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post, isOwner, onLike, onComment, onShare, onEdit, onDelete }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, isOwner, onLike, onComment, onShare, onEdit, onDelete, onUserClick }) => {
   const [showComments, setShowComments] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
 
@@ -25,7 +26,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, isOwner, onLike, onComment, o
           <img
             src={post.avatar}
             alt={post.username}
-            className="w-12 h-12 rounded-full object-cover border-2 border-[#c29a67]/20 shadow-lg"
+            onClick={() => onUserClick?.(post.userId)}
+            className="w-12 h-12 rounded-full object-cover border-2 border-[#c29a67]/20 shadow-lg cursor-pointer hover:border-[#c29a67] transition-colors"
           />
           {post.comments.length > 0 && (
             <div className="w-[2px] grow bg-[#2c1a12] rounded-full my-1"></div>
@@ -43,7 +45,12 @@ const PostItem: React.FC<PostItemProps> = ({ post, isOwner, onLike, onComment, o
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[16px] text-[#efebe9] hover:text-[#c29a67] transition-colors cursor-pointer tracking-tight">{post.username}</span>
+              <span
+                onClick={() => onUserClick?.(post.userId)}
+                className="font-bold text-[16px] text-[#efebe9] hover:text-[#c29a67] transition-colors cursor-pointer tracking-tight"
+              >
+                {post.username}
+              </span>
               <Icons.Verified />
               <span className="text-[#a09a96] text-xs font-medium uppercase tracking-wider ml-1">{post.createdAt}</span>
             </div>

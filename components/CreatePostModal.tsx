@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User } from '../types';
-import { generatePostContent } from '../services/geminiService';
 import { supabase } from '../services/supabaseClient';
 
 interface CreatePostModalProps {
@@ -17,19 +16,9 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onClose, onSubm
   const [content, setContent] = useState(initialData?.content || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(initialData?.image || '');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [aiTopic, setAiTopic] = useState('');
 
   const isEditing = !!initialData;
-
-  const handleGenerate = async () => {
-    if (!aiTopic) return;
-    setIsGenerating(true);
-    const result = await generatePostContent(aiTopic);
-    setContent(result);
-    setIsGenerating(false);
-  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -150,37 +139,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onClose, onSubm
           </div>
 
           {/* AI Section Card */}
-          <div className="mt-12 group transition-all duration-300">
-            <div className="bg-gradient-to-br from-[#2c1a12] to-[#1a1817] rounded-[2rem] p-8 border border-[#c29a67]/10 shadow-inner group-hover:border-[#c29a67]/30 transition-all">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[#c29a67]/10 rounded-xl">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c29a67" strokeWidth="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg>
-                </div>
-                <h4 className="text-xs font-black text-[#c29a67] uppercase tracking-[0.2em]">Brew with Gemini assistant</h4>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <input
-                  type="text"
-                  value={aiTopic}
-                  onChange={(e) => setAiTopic(e.target.value)}
-                  placeholder="e.g. A review of Third Wave's latest roast"
-                  className="flex-1 bg-[#0e0d0c]/50 border border-[#c29a67]/10 rounded-2xl px-5 py-4 text-sm focus:border-[#c29a67] outline-none text-[#efebe9] placeholder-[#a09a96]/20 transition-all font-medium"
-                />
-                <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !aiTopic}
-                  className="bg-[#c29a67] text-[#0e0d0c] text-sm font-black px-8 py-4 rounded-2xl hover:bg-[#d4b48d] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-[0_10px_20px_-5px_rgba(194,154,103,0.3)] active:scale-95 shrink-0"
-                >
-                  {isGenerating ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-[#0e0d0c] border-t-transparent rounded-full animate-spin" />
-                      Roasting Draft...
-                    </div>
-                  ) : 'Generate Draft'}
-                </button>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Footer */}

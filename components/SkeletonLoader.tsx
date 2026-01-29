@@ -4,9 +4,8 @@ const SkeletonLoader: React.FC = () => {
     return (
         <div className="flex-1 flex flex-col items-center overflow-y-auto bg-[#0e0d0c] min-h-screen">
             {/* Header Skeleton */}
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-                <div className="h-16 w-32 bg-[#1a1817] rounded-lg animate-pulse" />
-                <div className="h-6 w-24 bg-[#1a1817] rounded-full animate-pulse" />
+            <div className="sticky top-0 z-50 flex justify-center items-center py-3 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+                <div className="h-10 w-32 bg-[#1a1817] rounded-lg animate-pulse" />
             </div>
 
             <div className="w-full max-w-2xl px-4 pt-4 space-y-8 pb-32">

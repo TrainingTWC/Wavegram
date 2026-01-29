@@ -646,29 +646,17 @@ const App: React.FC = () => {
                     <div className="w-5 h-5 border-2 border-[#c29a67] border-t-transparent rounded-full animate-spin" />
                     <span className="text-sm font-bold">Refreshing...</span>
                   </>
-                ) : pullDistance > 80 ? (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm font-bold">Release to refresh</span>
-                  </>
-                ) : pullDistance > 0 ? (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                    <span className="text-sm font-bold">Pull to refresh</span>
-                  </>
                 ) : null}
               </div>
             </div>
 
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-16 flex items-center">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-3 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+              <div className="h-10 flex items-center transition-all duration-200" style={{
+                filter: pullDistance > 0 ? `grayscale(${Math.max(0, 1 - pullDistance / 100)}) opacity(${Math.min(1, 0.5 + (pullDistance / 200))})` : 'none',
+                transform: `scale(${Math.min(1.2, 1 + (pullDistance / 500))})`
+              }}>
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
-              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>
             </div>
             <div className="w-full max-w-2xl px-4 pt-4 space-y-8 pb-32">
               <BrewOfTheDay currentUser={currentUser} />
@@ -764,11 +752,10 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-16 flex items-center">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-3 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+              <div className="h-10 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
-              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Profile</div>
             </div>
 
             <div className="w-full max-w-2xl px-4 pt-4 pb-32">
@@ -906,11 +893,10 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="px-4 py-3 pt-4 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
-              <div className="h-16 flex items-center">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-3 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+              <div className="h-10 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
-              <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Interactions</div>
             </div>
             <div className="w-full max-w-2xl px-4 pt-4 space-y-4 pb-32">
               {activityLoading ? (

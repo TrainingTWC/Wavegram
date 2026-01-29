@@ -13,7 +13,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, onLogout, unreadCount = 0 }) => {
   return (
-    <div className="min-h-screen bg-[#0e0d0c] text-[#efebe9] flex flex-col md:flex-row justify-center">
+    <div className="min-h-screen bg-[#0e0d0c] text-[#efebe9] flex flex-col md:flex-row justify-center pt-[max(env(safe-area-inset-top),1.5rem)]">
       {/* Desktop Side Nav */}
       <nav className="hidden md:flex flex-col items-center py-6 w-20 fixed left-0 top-0 bottom-0 bg-[#0e0d0c] z-20 border-r border-[#2c1a12] pt-safe">
         <div className="mb-10 cursor-pointer group px-4 mt-4" onClick={() => setActiveTab(NavigationTab.HOME)}>

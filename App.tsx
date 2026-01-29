@@ -664,7 +664,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-20 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
@@ -764,7 +764,7 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-20 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
@@ -906,7 +906,7 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-20 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>

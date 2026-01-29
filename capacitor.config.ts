@@ -6,7 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   server: {
     url: 'https://TrainingTWC.github.io/Wavegram/',
-    cleartext: true
+    cleartext: true,
+    allowNavigation: ['TrainingTWC.github.io', '*.github.io']
   }
 };
 

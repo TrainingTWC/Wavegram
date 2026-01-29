@@ -12,15 +12,21 @@ import ShareModal from './components/ShareModal';
 import ArchetypeCard from './components/ArchetypeCard';
 import SkeletonLoader from './components/SkeletonLoader';
 import { BADGES, calculateEarnedBadges, Badge } from './utils/badgeSystem';
+import { App as CapacitorApp } from '@capacitor/app';
 import logo from './src/assets/login_logo.png';
 
 
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NavigationTab>(NavigationTab.HOME);
+  const [posts, setPosts] = useState<Post[]>(() => {
+    const cached = localStorage.getItem('cachedPosts');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [loading, setLoading] = useState(!posts.length);
+  const [activeTab, setActiveTab] = useState<NavigationTab>(() => {
+    return (localStorage.getItem('activeTab') as NavigationTab) || NavigationTab.HOME;
+  });
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPostForComment, setSelectedPostForComment] = useState<Post | null>(null);
   const [selectedPostForShare, setSelectedPostForShare] = useState<Post | null>(null);
@@ -43,7 +49,43 @@ const App: React.FC = () => {
   );
   // Ref to track latest view time for async operations to avoid race conditions
   const lastViewedRef = React.useRef(lastViewedInteractions);
+  const lastViewedRef = React.useRef(lastViewedInteractions);
   const touchStartY = React.useRef(0);
+
+  // Persistence Effects
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      localStorage.setItem('cachedPosts', JSON.stringify(posts));
+    }
+  }, [posts]);
+
+  // Back Button Handling
+  useEffect(() => {
+    let backListener: any;
+    const setupBackListener = async () => {
+      backListener = await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+        if (isPostModalOpen) {
+          setIsPostModalOpen(false);
+        } else if (selectedPostForComment || selectedPostForShare || selectedPostForEdit) {
+          setSelectedPostForComment(null);
+          setSelectedPostForShare(null);
+          setSelectedPostForEdit(null);
+        } else if (activeTab !== NavigationTab.HOME) {
+          setActiveTab(NavigationTab.HOME);
+        } else {
+          CapacitorApp.exitApp();
+        }
+      });
+    };
+    setupBackListener();
+    return () => {
+      if (backListener) backListener.remove();
+    };
+  }, [activeTab, isPostModalOpen, selectedPostForComment, selectedPostForShare, selectedPostForEdit]);
 
   // Handle Auth Session
   useEffect(() => {

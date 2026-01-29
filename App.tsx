@@ -997,8 +997,19 @@ const App: React.FC = () => {
     return <SkeletonLoader />;
   }
 
+  const handleMockLogin = () => {
+    setSession({ user: { id: '77777777-7777-7777-7777-777777777777' } });
+    setCurrentUser({
+      id: '77777777-7777-7777-7777-777777777777',
+      username: 'twc_training',
+      name: 'TWC Training Team',
+      avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=training',
+      verified: true
+    });
+  };
+
   if (!session || !currentUser) {
-    return <Auth />;
+    return <Auth onLoginSuccess={handleMockLogin} />;
   }
 
   return (

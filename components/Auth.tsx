@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import loginLogo from '../src/assets/login_logo.png';
 import { supabase } from '../services/supabaseClient';
 
-const Auth: React.FC = () => {
+interface AuthProps {
+    onLoginSuccess: () => void;
+}
+
+const Auth: React.FC<AuthProps> = ({ onLoginSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
@@ -46,7 +50,7 @@ const Auth: React.FC = () => {
             // Hardcoded Training Team Bypass
             if (authEmail === 'training@thirdwavecoffee.in' && password === 'Training@10') {
                 localStorage.setItem('bc_mock_session', 'training_team_active');
-                window.location.reload();
+                onLoginSuccess();
                 return;
             }
 

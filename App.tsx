@@ -657,12 +657,14 @@ const App: React.FC = () => {
           if (isTriggered && !isRefreshing) {
             setIsRefreshing(true);
 
-            // Minimum 3-4 pulses duration (approx 2.5s) + Network request
-            const minTimePromise = new Promise(resolve => setTimeout(resolve, 2500));
+            // Minimum 3-4 pulses duration (approx 2s) + Network request
+            const minTimePromise = new Promise(resolve => setTimeout(resolve, 2000));
             // Haptic feedback placeholder if we were native
             await Promise.all([fetchPosts(true), fetchActivity(), minTimePromise]);
 
-            setIsRefreshing(false);
+            // Force reload to fetch latest deployment from GitHub (OTA Update)
+            // State is already persisted in localStorage, so user context is preserved.
+            window.location.reload();
           }
           setPullDistance(0);
           touchStartY.current = 0;

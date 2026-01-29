@@ -227,7 +227,7 @@ const BrewOfTheDay: React.FC<BrewOfTheDayProps> = ({ currentUser }) => {
                         <h2 className="text-4xl font-black text-[#efebe9] mb-8 tracking-tighter group-hover:text-white transition-colors">Barista's Signature</h2>
 
                         <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-                            <div className="relative group/img shrink-0 bg-[#0e0d0c] rounded-[2.5rem] overflow-hidden border border-[#c29a67]/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                            <div className="relative group/img shrink-0 bg-[#0e0d0c] rounded-[2.5rem] overflow-hidden border border-[#c29a67]/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] self-center">
                                 <img
                                     src={data?.image_url || "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=400&h=400&auto=format&fit=crop"}
                                     alt={data?.title}

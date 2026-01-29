@@ -890,8 +890,8 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="sticky top-0 z-50 flex justify-center items-center py-3 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
-              <div className="h-10 flex items-center">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-1 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+              <div className="h-14 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
             </div>

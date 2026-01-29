@@ -635,7 +635,7 @@ const App: React.FC = () => {
             {/* Pull to Refresh Indicator */}
 
 
-            <div className="sticky top-0 z-50 flex justify-center items-center py-1 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
               <div className={`h-14 flex items-center transition-all duration-200 ${isRefreshing ? 'animate-pulse' : ''}`} style={{
                 filter: (pullDistance > 0 && !isRefreshing) ? `grayscale(${Math.max(0, 1 - pullDistance / 100)}) opacity(${Math.min(1, 0.5 + (pullDistance / 200))})` : 'none',
                 transform: `scale(${Math.min(1.2, 1 + (pullDistance / 500))})`
@@ -737,7 +737,7 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="sticky top-0 z-50 flex justify-center items-center py-1 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
               <div className="h-14 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
@@ -878,7 +878,7 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="sticky top-0 z-50 flex justify-center items-center py-1 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
               <div className="h-14 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>

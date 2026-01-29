@@ -633,23 +633,11 @@ const App: React.FC = () => {
             onTouchEnd={handleTouchEnd}
           >
             {/* Pull to Refresh Indicator */}
-            <div
-              className="w-full max-w-2xl flex justify-center overflow-hidden transition-all duration-300 ease-out"
-              style={{
-                height: isRefreshing ? '60px' : `${pullDistance}px`,
-                opacity: isRefreshing ? 1 : Math.min(pullDistance / 80, 1)
-              }}
-            >
-              <div className="flex items-center gap-2 text-[#c29a67]">
-                {isRefreshing ? (
-                  <div className="w-5 h-5 border-2 border-[#c29a67] border-t-transparent rounded-full animate-spin" />
-                ) : null}
-              </div>
-            </div>
+
 
             <div className="sticky top-0 z-50 flex justify-center items-center py-1 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
-              <div className="h-14 flex items-center transition-all duration-200" style={{
-                filter: pullDistance > 0 ? `grayscale(${Math.max(0, 1 - pullDistance / 100)}) opacity(${Math.min(1, 0.5 + (pullDistance / 200))})` : 'none',
+              <div className={`h-14 flex items-center transition-all duration-200 ${isRefreshing ? 'animate-pulse' : ''}`} style={{
+                filter: (pullDistance > 0 && !isRefreshing) ? `grayscale(${Math.max(0, 1 - pullDistance / 100)}) opacity(${Math.min(1, 0.5 + (pullDistance / 200))})` : 'none',
                 transform: `scale(${Math.min(1.2, 1 + (pullDistance / 500))})`
               }}>
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />

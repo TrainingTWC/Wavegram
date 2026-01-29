@@ -664,13 +664,13 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Barista's Choice</div>
             </div>
-            <div className="w-full max-w-2xl px-4 pt-36 space-y-8 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-4 space-y-8 pb-32">
               <BrewOfTheDay currentUser={currentUser} />
               <div className="space-y-0">
                 {posts.map((post) => (
@@ -764,14 +764,14 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Profile</div>
             </div>
 
-            <div className="w-full max-w-2xl px-4 pt-36 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-4 pb-32">
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-[#efebe9]">{targetUser.name}</h1>
@@ -906,13 +906,13 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between fixed top-0 bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
+            <div className="px-4 py-3 pt-12 border-b border-[#2c1a12] flex items-center justify-between bg-[#0e0d0c]/98 backdrop-blur-xl z-50 w-full max-w-2xl">
               <div className="h-16 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
               <div className="px-3 py-1 bg-[#c29a67]/10 text-[#c29a67] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#c29a67]/20">Interactions</div>
             </div>
-            <div className="w-full max-w-2xl px-4 pt-36 space-y-4 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-4 space-y-4 pb-32">
               {activityLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                   <div className="w-10 h-10 border-4 border-[#c29a67] border-t-transparent rounded-full animate-spin"></div>

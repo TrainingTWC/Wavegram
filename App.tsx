@@ -616,10 +616,12 @@ const App: React.FC = () => {
           if (isTriggered && !isRefreshing) {
             setIsRefreshing(true);
 
+            // Minimum 3-4 pulses duration (approx 2.5s) + Network request
+            const minTimePromise = new Promise(resolve => setTimeout(resolve, 2500));
             // Haptic feedback placeholder if we were native
-            await Promise.all([fetchPosts(true), fetchActivity()]);
+            await Promise.all([fetchPosts(true), fetchActivity(), minTimePromise]);
 
-            setTimeout(() => setIsRefreshing(false), 800);
+            setIsRefreshing(false);
           }
           setPullDistance(0);
           touchStartY.current = 0;
@@ -632,18 +634,18 @@ const App: React.FC = () => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Pull to Refresh Indicator */}
+            {/* Pull to Refresh Indicator - Spacer only since header is fixed */}
+            <div style={{ height: isRefreshing ? '60px' : `${pullDistance}px`, transition: 'height 0.3s' }} />
 
-
-            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
-              <div className={`h-14 flex items-center transition-all duration-200 ${isRefreshing ? 'animate-pulse' : ''}`} style={{
+            <div className="fixed top-0 z-50 flex justify-center items-center py-2 pt-[max(env(safe-area-inset-top)+8px,24px)] bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-[640px]">
+              <div className={`h-14 flex items-center transition-all duration-200 ${isRefreshing ? 'animate-pulse-fast' : ''}`} style={{
                 filter: (pullDistance > 0 && !isRefreshing) ? `grayscale(${Math.max(0, 1 - pullDistance / 100)}) opacity(${Math.min(1, 0.5 + (pullDistance / 200))})` : 'none',
                 transform: `scale(${Math.min(1.2, 1 + (pullDistance / 500))})`
               }}>
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
             </div>
-            <div className="w-full max-w-2xl px-4 pt-4 space-y-8 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-24 space-y-8 pb-32">
               <BrewOfTheDay currentUser={currentUser} />
               <div className="space-y-0">
                 {posts.map((post) => (
@@ -737,13 +739,13 @@ const App: React.FC = () => {
         return (
           <div className="flex-1 flex flex-col items-center">
             {/* Profile Header */}
-            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+            <div className="fixed top-0 z-50 flex justify-center items-center py-2 pt-[max(env(safe-area-inset-top)+8px,24px)] bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-[640px]">
               <div className="h-14 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
             </div>
 
-            <div className="w-full max-w-2xl px-4 pt-4 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-24 pb-32">
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-[#efebe9]">{targetUser.name}</h1>
@@ -878,12 +880,12 @@ const App: React.FC = () => {
       case NavigationTab.ACTIVITY:
         return (
           <div className="flex-1 flex flex-col items-center">
-            <div className="sticky top-0 z-50 flex justify-center items-center py-0.5 bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-2xl">
+            <div className="fixed top-0 z-50 flex justify-center items-center py-2 pt-[max(env(safe-area-inset-top)+8px,24px)] bg-[#0e0d0c]/98 backdrop-blur-xl border-b border-[#2c1a12] w-full max-w-[640px]">
               <div className="h-14 flex items-center">
                 <img src={logo} alt="Wavegram" className="h-full object-contain" />
               </div>
             </div>
-            <div className="w-full max-w-2xl px-4 pt-4 space-y-4 pb-32">
+            <div className="w-full max-w-2xl px-4 pt-24 space-y-4 pb-32">
               {activityLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                   <div className="w-10 h-10 border-4 border-[#c29a67] border-t-transparent rounded-full animate-spin"></div>

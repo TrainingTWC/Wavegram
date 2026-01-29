@@ -55,3 +55,21 @@ body {
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(194, 154, 103, 0.1);
 }
+
+@keyframes pulse-fast {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+}
+
+.animate-pulse-fast {
+    animation: pulse-fast 0.7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
